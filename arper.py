@@ -3,10 +3,17 @@ from scapy.all import *
 import sys
 import signal
 import netifaces
+import argparse
 
-interface = "eth0"           # Interface to send packets through
-target_ip = "192.168.1.31"   # IP address of target host
-gateway_ip = "192.168.1.1"   # IP address of gateway
+parser = argparse.ArgumentParser(description='ARP Poisoning Tool')
+parser.add_argument('-i', '--interface', help='Interface to send packets through', required=True)
+parser.add_argument('-t', '--target', help='IP address of target host', required=True)
+parser.add_argument('-g', '--gateway', help='IP address of gateway', required=True)
+args = parser.parse_args()
+
+interface = args.interface
+target_ip = args.target
+gateway_ip = args.gateway
 
 conf.iface = interface
 conf.verb = 0

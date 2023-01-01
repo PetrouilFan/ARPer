@@ -6,7 +6,11 @@ First you need to install the requirements:
 ```
 pip install -r requirements.txt
 ```
-Then you can run the script:
+Then you can run the script as follows:
 ```
-python arper.py
+python arper.py -i <interface> -t <target> -g <gateway>
+
+example: python arper.py -i eth0 -t 192.168.1.199 -g 192.168.1.1
 ```
+You may need to run it as root since it uses raw sockets and needs permissions to do so.
+
