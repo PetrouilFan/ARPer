@@ -66,16 +66,13 @@ gateway_mac = get_mac(gateway_ip)
 if gateway_mac is None:
     print("[!] Unable to get gateway MAC address. Exiting.")
     sys.exit(0)
-else:
-    print("[*] Gateway %s is at %s" % (gateway_ip, gateway_mac))
+print("[*] Gateway %s is at %s" % (gateway_ip, gateway_mac))
 
 target_mac = get_mac(target_ip)
-
 if target_mac is None:
     print("[!] Unable to get target MAC address. Exiting.")
     sys.exit(0)
-else:
-    print("[*] Target %s is at %s" % (target_ip, target_mac))
+print("[*] Target %s is at %s" % (target_ip, target_mac))
     
 attacker_mac = get_mac_address_of_interface(interface)
 
