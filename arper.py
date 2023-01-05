@@ -25,6 +25,11 @@ class Host:
         self.mac = None
         self.poison_packets = None # ARP packets to poison target [target, gateway]
 
+def get_attackers_ip(interface):
+    ifaddresses = netifaces.ifaddresses(interface)
+    ip_address = ifaddresses[netifaces.AF_INET]
+    return ip_address[0]['addr']
+
 def ip_translator(ip):
     '''
     Translates a given ip, ip range or subnet to a list of ips
@@ -121,6 +126,8 @@ attacker_mac = get_mac_address_of_interface(interface)
 
 targets = ip_translator(args.targets)
 excludes = ip_translator(args.exclude) if args.exclude else []
+excludes.append(Host(get_attackers_ip(interface)))
+excludes.append(Host(args.gateway))
 _exclude_ips = [item.ip for item in excludes]
 targets = [item for item in targets if item.ip not in _exclude_ips]
 del _exclude_ips
