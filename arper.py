@@ -155,7 +155,7 @@ check_if_alive(targets)
 
 gateway_mac = get_mac(gateway_ip)
 if gateway_mac is None:
-    print("[!] Unable to get gateway MAC address. Exiting.")
+    print("[!] Unable to get gateway MAC address. Make sure the gateway address is right. Exiting.")
     sys.exit(0)
 print("[*] Gateway %s is at %s" % (gateway_ip, gateway_mac))
 
@@ -170,7 +170,7 @@ for target in targets:
 
 online_targets = len([target for target in targets if target.is_alive])
 if online_targets == 0:
-    print("[!] No targets are online. Exiting.")
+    print("[!] Non of the targets are online. Exiting.")
     sys.exit(0)
     
 try:
