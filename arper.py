@@ -8,13 +8,16 @@ import pythonping
 import threading
 
 parser = argparse.ArgumentParser(description='ARP Poisoning Tool')
-parser.add_argument('-i', '--interface', help='Interface to send packets through', required=True)
+parser.add_argument('-i', '--interface', help='Interface to send packets through', required=False)
 parser.add_argument('-t', '--targets', help='IP address of target hosts', required=True)
-parser.add_argument('-g', '--gateway', help='IP address of gateway', required=True)
+parser.add_argument('-g', '--gateway', help='IP address of gateway', required=False)
 parser.add_argument('-e', '--exclude', help='IP address of hosts to exclude from poisoning', required=False)
 args = parser.parse_args()
 
-interface = args.interface
+if not args.interface:
+    interface = netifaces.gateways()['default'][netifaces.AF_INET][1]
+else:
+    interface = args.interface
 conf.iface = interface
 conf.verb = 0
 
@@ -135,16 +138,20 @@ def poison_target(gateway_ip, gateway_mac, targets):
 
 attacker_mac = get_mac_address_of_interface(interface)
 
+if not args.gateway:
+    gateway_ip = netifaces.gateways()['default'][netifaces.AF_INET][0]
+else:
+    gateway_ip = args.gateway
+
 targets = ip_translator(args.targets)
 excludes = ip_translator(args.exclude) if args.exclude else []
 excludes.append(Host(get_attackers_ip(interface)))
-excludes.append(Host(args.gateway))
+excludes.append(Host(gateway_ip))
 _exclude_ips = [item.ip for item in excludes]
 targets = [item for item in targets if item.ip not in _exclude_ips]
 del _exclude_ips
 
 check_if_alive(targets)
-gateway_ip = args.gateway
 
 gateway_mac = get_mac(gateway_ip)
 if gateway_mac is None:
