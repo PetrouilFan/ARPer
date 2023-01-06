@@ -36,7 +36,18 @@ def ip_translator(ip):
     ip: str
     return: list of Ip objects
     '''
-    if "-" in ip:
+    if "," in ip:
+        # Ip is a list of ips or ip ranges or subnets
+        # Translate each ip, ip range or subnet to a list of ips
+        _ips = ip.split(",")
+        for i in range(len(_ips)):
+            _ips[i] = ip_translator(_ips[i].strip())
+        ips = []
+        for _ip in _ips:
+            ips.extend(_ip)
+        return ips
+
+    elif "-" in ip:
         # Ip is a range (hopefully without broadcast and network ip)
         ip = ip.split("-")
         ips = []

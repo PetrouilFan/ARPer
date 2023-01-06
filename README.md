@@ -19,6 +19,9 @@ python arper.py -i eth0 -t 192.168.1.0/24 -g 192.168.1.1
 # or
 python arper.py -i eth0 -t 192.168.1.100-200 -g 192.168.1.1
 
+# or
+python arper.py -i eth0 -t 192.168.1.100-200,192.168.1.250 -g 192.168.1.1
+
 # you can also, exclude ips:
 python arper.py -i eth0 -t 192.168.1.100-200 -g 192.168.1.1 -e 192.168.1.150
 ```
